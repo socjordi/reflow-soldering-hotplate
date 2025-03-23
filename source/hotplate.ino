@@ -9,6 +9,8 @@
 #include <MAX6675.h>
 #include <PID_v1.h>
 
+# define MAXLOGS 360
+
 const char* ssid = "SIBUR";  // o SIBUR_5G
 const char* password = "tsupufeuf1969";
 const char* jsonFileName = "/config.json";
@@ -66,14 +68,14 @@ Profile profiles[5];
 
 struct LogEntry {
   int elapsed;
-  char stage;
-  int current_temp;
-  int target_temp;
+  int stage;
+  float current_temp;
+  float target_temp;
   float output;
-  char ssr;
+  int ssr;
 };
 
-LogEntry logs[360];
+LogEntry logs[MAXLOGS];
 int numLogs = 0;
 
 void parseJsonArray(String jsonString) {
@@ -125,15 +127,25 @@ void parseJsonArray(String jsonString) {
   }
 }
 
+String StageName(int code) {
+  switch(code) {
+    case 0: return "Preheat"; break;
+    case 1: return "Soak"; break;
+    case 2: return "Reflow"; break;
+    case 3: return "Cooling"; break;
+  }
+  return "";
+}
+
 String generateCSV() {
-  String csv = "Elapsed,Stage,Current Temp,Target Temp,Output,SSR\n"; // CSV Header
+  String csv = "Elapsed,Stage,CurrentTemp,TargetTemp,Output,SSR\n"; // CSV Header
   for (int i = 0; i < numLogs; i++) {
     csv += String(logs[i].elapsed) + "," +
-            String(logs[i].stage) + "," +
-            String(logs[i].current_temp) + "," +
-            String(logs[i].target_temp) + "," +
-            String(logs[i].output, 2) + "," +
-            String(logs[i].ssr) + "\n";
+           String(logs[i].stage) + "," +
+           String(logs[i].current_temp) + "," +
+           String(logs[i].target_temp) + "," +
+           String(logs[i].output, 2) + "," +
+           String(logs[i].ssr) + "\n";
   }
   return csv;
 }
@@ -287,10 +299,15 @@ void loop(void) {
   if (status == 0) {
     sprintf(msg, "Temp: %d°C", int(currentTemp));
     u8g2.drawUTF8(5, 10, msg);
-    if (currentStage > 0) {
-      sprintf(msg, "%d %d", currentStage, elapsedTime);
-      u8g2.drawStr(5, 20, msg);
+
+    if (currentStage < 0) {
+      sprintf(msg, "Profile %s", profiles[currentProfile].name);
     }
+    else {
+      elapsedTime = (millis() - startTime) / 1000;
+      sprintf(msg, "%s %ds", StageName(currentStage), elapsedTime);
+    }
+    u8g2.drawStr(5, 20, msg);
   }
   else if (status == 4) {
     u8g2.drawStr(5, 15, "Check thermopar");
@@ -301,15 +318,27 @@ void loop(void) {
 
   buttonState = digitalRead(button_Select_Pin);
   if (buttonState == LOW) {
+    u8g2.clearBuffer();
     u8g2.drawStr(5, 15, "SELECT");
+    currentProfile++;
+    if (currentProfile >= numProfiles) currentProfile = 0;
   }
 
   buttonState = digitalRead(button_Start_Pin);
   if (buttonState == LOW) {
-    u8g2.drawStr(5, 15, "START");
-    totalstartTime = millis();
-    startTime = millis();
-    currentStage = 0;
+    u8g2.clearBuffer();
+    digitalWrite(FAN_PIN, LOW);
+    if (currentStage < 0) {
+      u8g2.drawStr(5, 15, "START");
+      totalstartTime = millis();
+      startTime = millis();
+      currentStage = 0;
+    }
+    else {
+      u8g2.drawStr(5, 15, "STOP");
+      currentStage = -1;
+      digitalWrite(SSR_PIN, 0);
+     }
   }
 
   u8g2.sendBuffer();
@@ -320,7 +349,7 @@ void loop(void) {
 
     if (currentStage < 4) {
       if (elapsedTime > profile.stages[currentStage].duration) {
-          currentStage++;
+          if (currentStage < 3) currentStage++;
           startTime = millis();
       }
       targetTemp = profile.stages[currentStage].temperature;
@@ -342,13 +371,16 @@ void loop(void) {
       digitalWrite(SSR_PIN, ssr);
      }
 
-    if (currentStage == 3) digitalWrite(FAN_PIN, HIGH);
+    if (currentStage == 3) {
+      digitalWrite(FAN_PIN, HIGH);
+      if (currentTemp < 30) digitalWrite(FAN_PIN, LOW);
+    }
 
     unsigned long totalTime = (millis() - totalstartTime) / 1000;
 
     Serial.print("Total: "); Serial.print(totalTime);
     Serial.print(" | Elapsed: "); Serial.print(elapsedTime);
-    Serial.print(" | Stage: "); Serial.print(currentStage);
+    Serial.print(" | Stage: "); Serial.print(StageName(currentStage));
     Serial.print(" | Temp: "); Serial.print(currentTemp);
     Serial.print(" | Target: "); Serial.print(targetTemp);
     Serial.print(" | Output: "); Serial.print(output);
@@ -361,8 +393,8 @@ void loop(void) {
     logs[numLogs].output = output;
     logs[numLogs].ssr = ssr;
 
-    numLogs++;
+    if (numLogs < MAXLOGS-1) numLogs++;
   }
 
-  delay(500);
+  delay(1000);
 }
