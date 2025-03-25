@@ -2,7 +2,7 @@
 
 This project is a reflow soldering hotplate. A reflow soldering hotplate is a heated surface used to solder surface-mount components onto a PCB by reflowing solder paste. It works by heating the PCB to a controlled temperature profile, melting the solder paste, and forming strong electrical and mechanical connections between the components and the board.
 
-It's composed of a 500 W aluminum hot plate, a fan for the cooling phase, an ESP32-C3 microcontroller, an OLED display, 2 relays, a K-type thermopar and some other components. The total cost of materials was about 42 €.
+It's composed of a 500 W aluminium heating plate, a fan for the cooling phase, an ESP32-C3 microcontroller, an OLED display, 2 relays, a K-type thermopar and some other components. The total cost of materials was about 42 €.
 
 The profiles can be read or write on wifi, as well as the log of the last reflow cycle.
 
@@ -22,7 +22,7 @@ Bill of materials (41.94 €):
 - MAX6675 module (1.91 €)
 - K-type thermopar (2.33 €)
 - 2 buttons (0.12 €)
-- 1 transitor NPN 8050 (0.06 €)
-- Aluminum Hot plate 500W (9.09 €)
+- 1 NPN transistor SS8050 (0.06 €)
+- Aluminium electric heating plate 500W (9.09 €)
 - Fan 12V, 140x140mm, 140 CFM (11.00 €)
 - Power adapter 12V / 5V (5.00 €)
