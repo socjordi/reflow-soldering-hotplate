@@ -13,6 +13,9 @@ The profiles can be read or write on wifi, as well as the log of the last reflow
 <img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150800.jpg" width="800"/>
 <img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150813.jpg" width="800"/>
 
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/low_temp_profile.png" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/high_temp_profile.png" width="800"/>
+
 Bill of materials (41.94 €):
 
 - Module ESP32-C3 super mini (2.54 €)
