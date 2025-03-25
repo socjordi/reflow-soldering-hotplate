@@ -1,6 +1,11 @@
 # reflow-soldering-hotplate
 
 <img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/schematics.png" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150605.jpg" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150620.jpg" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150632.jpg" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150800.jpg" width="800"/>
+<img src="https://github.com/socjordi/reflow-soldering-hotplate/blob/main/images/IMG_20250325_150813.jpg" width="800"/>
 
 Bill of materials (41.94 €):
 
