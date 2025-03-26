@@ -11,8 +11,8 @@
 
 # define MAXLOGS 360
 
-const char* ssid = "SIBUR";  // o SIBUR_5G
-const char* password = "tsupufeuf1969";
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
 const char* jsonFileName = "/config.json";
 const char* serverUrl = "http://192.168.1.13/config.json";
 
